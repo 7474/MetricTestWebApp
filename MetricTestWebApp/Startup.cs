@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using App.Metrics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,14 +32,21 @@ namespace MetricTestWebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            var metrics = AppMetrics.CreateDefaultBuilder()
+                .Build();
+
+            services.AddMetrics(metrics);
+            services.AddMetricsTrackingMiddleware();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddMetrics();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseMetricsAllMiddleware();
+            app.UseMetricsAllEndpoints();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
