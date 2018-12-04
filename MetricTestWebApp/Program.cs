@@ -44,7 +44,7 @@ namespace MetricTestWebApp
                 .UseConfiguration(config)
                 .ConfigureMetricsWithDefaults(builder =>
                 {
-                    string mackerelApiKey = config.GetValue<string>("Meckerel:ApiKey");
+                    string mackerelApiKey = config.GetValue<string>("Mackerel:ApiKey");
                     string mackerelHostId = config.GetValue<string>("Mackerel:HostId");
                     //builder.Report.ToConsole(TimeSpan.FromSeconds(2));
                     //builder.Report.ToTextFile(@"C:\metrics.txt", TimeSpan.FromSeconds(20));
