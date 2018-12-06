@@ -54,7 +54,7 @@ namespace MetricTestWebApp
                         {
                             options.HttpSettings.RequestUri = new Uri("https://api.mackerelio.com/api/v0/tsdb");
                             options.HttpPolicy.BackoffPeriod = TimeSpan.FromSeconds(30);
-                            options.HttpPolicy.FailuresBeforeBackoff = 3;
+                            options.HttpPolicy.FailuresBeforeBackoff = 1;
                             options.HttpPolicy.Timeout = TimeSpan.FromSeconds(10);
                             options.MetricsOutputFormatter = new HostMetricsJsonOutputFormatter(mackerelHostId);
                             options.InnerHttpMessageHandler = new MackerelApiMessageHandler(mackerelApiKey);
@@ -77,12 +77,14 @@ namespace MetricTestWebApp
             InnerHandler = new HttpClientHandler();
             _apiKey = apiKey;
         }
-        protected override Task<HttpResponseMessage> SendAsync(
+        protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
             request.Headers.Add("X-Api-Key", _apiKey);
             Console.WriteLine("Send Host Metric. " + DateTimeOffset.UtcNow);
-            return base.SendAsync(request, cancellationToken);
+            var response = await base.SendAsync(request, cancellationToken);
+            Console.WriteLine(response.StatusCode);
+            return response;
         }
     }
     public class HostMetricValue
@@ -104,6 +106,8 @@ namespace MetricTestWebApp
         }
 
         public MetricsMediaTypeValue MediaType => new MetricsMediaTypeValue("application", "vnd.appmetrics.metrics", "v1", "json");
+
+        public MetricFields MetricFields { get; set; }
 
         public Task WriteAsync(
             Stream output,
@@ -140,11 +144,7 @@ namespace MetricTestWebApp
             }
             Console.WriteLine(string.Join(", ", metrics.Select(x => x.name)));
 
-#if NETSTANDARD1_6
             return Task.CompletedTask;
-#else
-            return AppMetricsTaskHelper.CompletedTask();
-#endif
         }
         private static IEnumerable<HostMetricValue> ToMetricValues(MetricFamily family, Metric metric)
         {
