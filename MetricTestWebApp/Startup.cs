@@ -40,7 +40,7 @@ namespace MetricTestWebApp
             //services.AddMetricsReportingHostedService();
 
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddMetrics();
         }
 
