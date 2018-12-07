@@ -51,7 +51,7 @@ namespace MetricTestWebApp
                     string mackerelHostId = config.GetValue<string>("Mackerel:HostId");
                     //builder.Report.ToConsole(TimeSpan.FromSeconds(2));
                     //builder.Report.ToTextFile(@"C:\metrics.txt", TimeSpan.FromSeconds(20));
-                    var filter = new MetricsFilter().WhereType(App.Metrics.MetricType.Timer);
+                    var filter = new MetricsFilter(); //.WhereType(App.Metrics.MetricType.Timer);
                     builder.Report.ToMackerel(
                         options =>
                         {
