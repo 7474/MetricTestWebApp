@@ -1,0 +1,34 @@
+﻿using App.Metrics.Logging;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace AppMetricsMackerelReporter
+{
+    // https://docs.microsoft.com/ja-jp/aspnet/web-api/overview/advanced/http-message-handlers
+    class MackerelApiMessageHandler : DelegatingHandler
+    {
+        private static readonly ILog Logger = LogProvider.For<MackerelApiMessageHandler>();
+
+        private readonly string _apiKey;
+
+        public MackerelApiMessageHandler(string apiKey)
+        {
+            InnerHandler = new HttpClientHandler();
+            _apiKey = apiKey;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            request.Headers.Add("X-Api-Key", _apiKey);
+            Logger.Debug("Send Host Metric. " + DateTimeOffset.UtcNow);
+            var response = await base.SendAsync(request, cancellationToken);
+            Logger.Debug("Send Host Metric..." + response.StatusCode);
+            return response;
+        }
+    }
+}

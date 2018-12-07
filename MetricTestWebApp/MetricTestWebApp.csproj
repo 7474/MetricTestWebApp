@@ -17,4 +17,8 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AppMetricsMackerelReporter\AppMetricsMackerelReporter.csproj" />
+  </ItemGroup>
+
 </Project>
