@@ -35,12 +35,12 @@ namespace MetricTestWebApp
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
-            // XXX ええ感じの取りかた
+            // ホストのビルドパイプライン中で設定を参照するためここで設定をビルドする。
             var config = new ConfigurationBuilder()
-                .AddCommandLine(args)
-                .AddEnvironmentVariables()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+                .AddEnvironmentVariables()
+                .AddCommandLine(args)
                 .Build();
 
             return WebHost.CreateDefaultBuilder(args)

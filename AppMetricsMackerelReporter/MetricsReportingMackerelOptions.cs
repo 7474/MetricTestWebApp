@@ -28,7 +28,11 @@ namespace AppMetricsMackerelReporter
         public MetricsReportingMackerelOptions()
         {
             ApiBase = API_BASE_DEFAULT;
-            HttpOptions = new MetricsReportingHttpOptions();
+            HttpOptions = new MetricsReportingHttpOptions()
+            {
+                // メトリックは1分毎に送出する
+                FlushInterval = TimeSpan.FromSeconds(60)
+            };
         }
     }
 }
