@@ -5,7 +5,8 @@ using App.Metrics.Formatters.Prometheus;
 using App.Metrics.Formatters.Prometheus.Internal;
 using App.Metrics.Formatters.Prometheus.Internal.Extensions;
 using App.Metrics.Logging;
-using AppMetricsMackerelReporter.Api;
+using AppMetricsMackerelReporter.Extensions;
+using AppMetricsMackerelReporter.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -48,18 +49,13 @@ namespace AppMetricsMackerelReporter
             var baseDt = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
             var time = (metricData.Timestamp - baseDt).Ticks / 10000000;
             var serilizer = JsonSerializer.Create(_serializerSettings);
-            var metrics = metricData.GetPrometheusMetricsSnapshot(PrometheusFormatterConstants.MetricNameFormatter)
+            var metrics = metricData.GetMackerelMetricsSnapshot()
                 .SelectMany(metricFamiry =>
                 {
                     return metricFamiry.metric.SelectMany(metric =>
                     {
-                        return ToMetricValues(metricFamiry, metric);
+                        return ToMetricValues(_hostId, time, metricFamiry, metric);
                     });
-                }).Select(x =>
-                {
-                    x.hostId = _hostId;
-                    x.time = time;
-                    return x;
                 });
 
             using (var streamWriter = new StreamWriter(output))
@@ -73,87 +69,20 @@ namespace AppMetricsMackerelReporter
 
             return Task.CompletedTask;
         }
-        private static IEnumerable<HostMetricValue> ToMetricValues(MetricFamily family, Metric metric)
+
+        private static IEnumerable<HostMetricValue> ToMetricValues(string hostId, long time, MetricGroup family, MetricValue metric)
         {
-            var s = new List<HostMetricValue>();
-            var familyName = family.name;
-            // Mackerelのホストメトリックではサーバに関するメタ情報を送出する必要はない
-            var label = new LabelPair[] { };// metric.label;
-
-            if (metric.gauge != null)
-            {
-                s.Add(SimpleValue(familyName, metric.gauge.value, label));
-            }
-            else if (metric.counter != null)
-            {
-                s.Add(SimpleValue(familyName, metric.counter.value, label));
-            }
-            else if (metric.summary != null)
-            {
-                s.Add(SimpleValue(familyName, metric.summary.sample_sum, label, ".sum"));
-                s.Add(SimpleValue(familyName, metric.summary.sample_count, label, ".count"));
-
-                foreach (var quantileValuePair in metric.summary.quantile)
-                {
-                    var quantile = double.IsPositiveInfinity(quantileValuePair.quantile)
-                        ? "+Inf"
-                        : quantileValuePair.quantile.ToString(CultureInfo.InvariantCulture);
-                    s.Add(
-                        SimpleValue(
-                            familyName,
-                            quantileValuePair.value,
-                            label.Concat(new[] { new LabelPair { name = "quantile", value = quantile } })));
-                }
-            }
-            else if (metric.histogram != null)
-            {
-                s.Add(SimpleValue(familyName, metric.histogram.sample_sum, label, ".sum"));
-                s.Add(SimpleValue(familyName, metric.histogram.sample_count, label, ".count"));
-                foreach (var bucket in metric.histogram.bucket)
-                {
-                    var value = double.IsPositiveInfinity(bucket.upper_bound) ? "+Inf" : bucket.upper_bound.ToString(CultureInfo.InvariantCulture);
-                    s.Add(
-                        SimpleValue(
-                            familyName,
-                            bucket.cumulative_count,
-                            label.Concat(new[] { new LabelPair { name = "le", value = value } }),
-                            ".bucket"));
-                }
-            }
-            else
-            {
-                // not supported
-            }
-
-            return s;
+            return family.metric.Select(x => ToHostMetricValue(hostId, time, family, x));
         }
-        private static string WithLabels(string familyName, IEnumerable<LabelPair> labels)
-        {
-            var labelPairs = labels as LabelPair[] ?? labels.ToArray();
 
-            if (labelPairs.Length == 0)
-            {
-                return familyName;
-            }
-
-            return string.Format("{0}.{1}", familyName, string.Join(".", labelPairs.Select(l => string.Format("{0}{1}", l.name, l.value).Replace(".", ""))));
-        }
-        private static HostMetricValue SimpleValue(string family, double value, IEnumerable<LabelPair> labels, string namePostfix = null)
+        private static HostMetricValue ToHostMetricValue(string hostId, long time, MetricGroup family, MetricValue value)
         {
-            var name = WithLabels(family.Replace('_', '.') + (namePostfix ?? string.Empty), labels);
-            decimal decimalValue;
-            try
-            {
-                decimalValue = new decimal(value);
-            }
-            catch
-            {
-                decimalValue = 0;
-            }
             return new HostMetricValue()
             {
-                name = name,
-                value = decimalValue
+                hostId = hostId,
+                time = time,
+                name = family.name + (string.IsNullOrEmpty(value.name) ? "" : "." + value.name.NoamalizeName()),
+                value = value.value
             };
         }
     }

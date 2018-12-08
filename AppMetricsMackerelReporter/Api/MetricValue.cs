@@ -6,11 +6,9 @@ using System.Text;
 
 namespace AppMetricsMackerelReporter.Model
 {
-    public class HostMetricValue
+    public class MetricValue
     {
-        public string hostId { get; set; }
         public string name { get; set; }
-        public long time { get; set; }
         public decimal value { get; set; }
     }
 }
