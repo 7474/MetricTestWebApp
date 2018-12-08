@@ -41,13 +41,16 @@ namespace ReportingSandbox.JustForTesting
                 () => _process.PeakVirtualMemorySize64);
             _metrics.Measure.Gauge.SetValue(
                 AppMetricsRegistry.ProcessMetrics.ProcessPeekWorkingSetSizeGauge,
-                () => _process.WorkingSet64);
+                () => _process.PeakWorkingSet64);
             _metrics.Measure.Gauge.SetValue(
                 AppMetricsRegistry.ProcessMetrics.ProcessPrivateMemorySizeGauge,
                 () => _process.PrivateMemorySize64);
             _metrics.Measure.Gauge.SetValue(
                 AppMetricsRegistry.ProcessMetrics.ProcessVirtualMemorySizeGauge,
                 () => _process.VirtualMemorySize64);
+            _metrics.Measure.Gauge.SetValue(
+                AppMetricsRegistry.ProcessMetrics.ProcessWorkingSetSizeGauge,
+                () => _process.WorkingSet64);
             _metrics.Measure.Gauge.SetValue(
                 AppMetricsRegistry.ProcessMetrics.SystemNonPagedMemoryGauge,
                 () => _process.NonpagedSystemMemorySize64);

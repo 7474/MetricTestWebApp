@@ -102,7 +102,7 @@ namespace AppMetricsMackerelReporter.Extensions
                 },
                 new MetricValue
                 {
-                    name = "Sum",
+                    name = "Meta.Sum",
                     value = metric.Value.Sum.ToDecimal()
                 },
                 new MetricValue
@@ -143,7 +143,7 @@ namespace AppMetricsMackerelReporter.Extensions
                 },
                 new MetricValue
                 {
-                    name = "Sum",
+                    name = "Meta.Sum",
                     value = rescaledVal.Histogram.Sum.ToDecimal()
                 },
                 new MetricValue
