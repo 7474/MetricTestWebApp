@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using App.Metrics;
-using App.Metrics.Logging;
+using App.Metrics.Filtering;
+using AppMetricsMackerelReporter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ReportingSandbox.JustForTesting;
+using System;
 
 namespace MetricTestWebApp
 {
@@ -34,9 +31,23 @@ namespace MetricTestWebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            //var metrics = AppMetrics.CreateDefaultBuilder()
-            //    .Build();
-            var metrics = Program.Metrics;
+            string mackerelApiKey = Configuration.GetValue<string>("Mackerel:ApiKey");
+            string mackerelHostId = Configuration.GetValue<string>("Mackerel:HostId");
+            var filter = new MetricsFilter();
+            var metrics = AppMetrics.CreateDefaultBuilder()
+                .Report.ToMackerel(
+                    options =>
+                    {
+                        options.ApiKey = mackerelApiKey;
+                        options.HostId = mackerelHostId;
+
+                        options.HttpOptions.HttpPolicy.BackoffPeriod = TimeSpan.FromSeconds(30);
+                        options.HttpOptions.HttpPolicy.FailuresBeforeBackoff = 3;
+                        options.HttpOptions.HttpPolicy.Timeout = TimeSpan.FromSeconds(10);
+                        options.HttpOptions.Filter = filter;
+                        options.HttpOptions.FlushInterval = TimeSpan.FromSeconds(60);
+                    })
+                .Build();
 
             SampleMetricsRunner.ScheduleSomeSampleMetrics(metrics);
             services.AddMetrics(metrics);
