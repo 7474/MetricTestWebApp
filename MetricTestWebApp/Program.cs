@@ -22,12 +22,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Serilog;
+using Serilog.Events;
 
 namespace MetricTestWebApp
 {
     public class Program
     {
-        public static ILogger Logger;
+        public static IMetricsRoot Metrics { get; private set; }
+
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();
@@ -35,6 +38,12 @@ namespace MetricTestWebApp
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Verbose)
+                .WriteTo.LiterateConsole()
+                .CreateLogger();
+
             // ホストのビルドパイプライン中で設定を参照するためここで設定をビルドする。
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -43,30 +52,31 @@ namespace MetricTestWebApp
                 .AddCommandLine(args)
                 .Build();
 
+            string mackerelApiKey = config.GetValue<string>("Mackerel:ApiKey");
+            string mackerelHostId = config.GetValue<string>("Mackerel:HostId");
+            //builder.Report.ToConsole(TimeSpan.FromSeconds(30));
+            //builder.Report.ToTextFile(@"C:\metrics.txt", TimeSpan.FromSeconds(20));
+
+            var filter = new MetricsFilter(); //.WhereType(App.Metrics.MetricType.Timer);
+            Metrics = AppMetrics.CreateDefaultBuilder()
+                .Report.ToMackerel(
+                    options =>
+                    {
+                        options.ApiKey = mackerelApiKey;
+                        options.HostId = mackerelHostId;
+
+                        options.HttpOptions.HttpPolicy.BackoffPeriod = TimeSpan.FromSeconds(30);
+                        options.HttpOptions.HttpPolicy.FailuresBeforeBackoff = 3;
+                        options.HttpOptions.HttpPolicy.Timeout = TimeSpan.FromSeconds(10);
+                        options.HttpOptions.Filter = filter;
+                        options.HttpOptions.FlushInterval = TimeSpan.FromSeconds(60);
+                    })
+                .Build();
+
             return WebHost.CreateDefaultBuilder(args)
                 .UseConfiguration(config)
-                .ConfigureMetricsWithDefaults(builder =>
-                {
-                    string mackerelApiKey = config.GetValue<string>("Mackerel:ApiKey");
-                    string mackerelHostId = config.GetValue<string>("Mackerel:HostId");
-                    //builder.Report.ToConsole(TimeSpan.FromSeconds(2));
-                    //builder.Report.ToTextFile(@"C:\metrics.txt", TimeSpan.FromSeconds(20));
-                    var filter = new MetricsFilter(); //.WhereType(App.Metrics.MetricType.Timer);
-                    builder.Report.ToMackerel(
-                        options =>
-                        {
-                            options.ApiKey = mackerelApiKey;
-                            options.HostId = mackerelHostId;
-
-                            options.HttpOptions.HttpPolicy.BackoffPeriod = TimeSpan.FromSeconds(30);
-                            options.HttpOptions.HttpPolicy.FailuresBeforeBackoff = 3;
-                            options.HttpOptions.HttpPolicy.Timeout = TimeSpan.FromSeconds(10);
-                            options.HttpOptions.Filter = filter;
-                            options.HttpOptions.FlushInterval = TimeSpan.FromSeconds(60);
-                        });
-                })
-                .UseMetrics()
-                .UseMetricsWebTracking()
+                //.UseMetrics()
+                //.UseMetricsWebTracking()
                 .UseStartup<Startup>();
         }
     }

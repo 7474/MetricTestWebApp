@@ -140,10 +140,20 @@ namespace AppMetricsMackerelReporter
         }
         private static HostMetricValue SimpleValue(string family, double value, IEnumerable<LabelPair> labels, string namePostfix = null)
         {
+            var name = WithLabels(family.Replace('_', '.') + (namePostfix ?? string.Empty), labels);
+            decimal decimalValue;
+            try
+            {
+                decimalValue = new decimal(value);
+            }
+            catch
+            {
+                decimalValue = 0;
+            }
             return new HostMetricValue()
             {
-                name = WithLabels(family.Replace('_', '.') + (namePostfix ?? string.Empty), labels),
-                value = new decimal(value)
+                name = name,
+                value = decimalValue
             };
         }
     }

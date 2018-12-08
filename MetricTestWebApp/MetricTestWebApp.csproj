@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AppMetricsMackerelReporter\AppMetricsMackerelReporter.csproj" />
+    <ProjectReference Include="..\ReportingSandbox\ReportingSandbox.csproj" />
   </ItemGroup>
 
 </Project>

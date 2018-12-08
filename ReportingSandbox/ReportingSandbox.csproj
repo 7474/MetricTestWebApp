@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="App.Metrics" Version="3.0.0" />
+    <PackageReference Include="App.Metrics.AspNetCore.Reporting" Version="3.0.0" />
+    <PackageReference Include="App.Metrics.Extensions.DependencyInjection" Version="3.0.0" />
+    <PackageReference Include="App.Metrics.Extensions.Hosting" Version="3.0.0" />
+    <PackageReference Include="App.Metrics.Formatters.InfluxDB" Version="3.0.0" />
+    <PackageReference Include="App.Metrics.Reporting.Console" Version="3.0.0" />
+    <PackageReference Include="App.Metrics.Reporting.Http" Version="3.0.0" />
+    <PackageReference Include="App.Metrics.Reporting.Socket" Version="3.0.0" />
+    <PackageReference Include="App.Metrics.Reporting.TextFile" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Serilog.Sinks.Literate" Version="3.0.1-dev-00044" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="4.0.1-dev-00159" />
+    <PackageReference Include="Serilog.AspNetCore " Version="2.1.2-dev-00028" />
+  </ItemGroup>
+
+</Project>

@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricTestWebApp", "MetricTestWebApp\MetricTestWebApp.csproj", "{59AC1BDD-C432-4622-8E70-482CB66ED09C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetricTestWebApp", "MetricTestWebApp\MetricTestWebApp.csproj", "{59AC1BDD-C432-4622-8E70-482CB66ED09C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppMetricsMackerelReporter", "AppMetricsMackerelReporter\AppMetricsMackerelReporter.csproj", "{D773B8AF-EAAF-48CD-80CC-7E9F7B6A7BFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppMetricsMackerelReporter", "AppMetricsMackerelReporter\AppMetricsMackerelReporter.csproj", "{D773B8AF-EAAF-48CD-80CC-7E9F7B6A7BFE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportingSandbox", "ReportingSandbox\ReportingSandbox.csproj", "{F6914D8D-8A72-46E2-B5E5-A30BDB92B57A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{D773B8AF-EAAF-48CD-80CC-7E9F7B6A7BFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D773B8AF-EAAF-48CD-80CC-7E9F7B6A7BFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D773B8AF-EAAF-48CD-80CC-7E9F7B6A7BFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6914D8D-8A72-46E2-B5E5-A30BDB92B57A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6914D8D-8A72-46E2-B5E5-A30BDB92B57A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6914D8D-8A72-46E2-B5E5-A30BDB92B57A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6914D8D-8A72-46E2-B5E5-A30BDB92B57A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

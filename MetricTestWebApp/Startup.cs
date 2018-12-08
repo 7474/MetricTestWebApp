@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ReportingSandbox.JustForTesting;
 
 namespace MetricTestWebApp
 {
@@ -33,12 +34,15 @@ namespace MetricTestWebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            var metrics = AppMetrics.CreateDefaultBuilder()
-                .Build();
+            //var metrics = AppMetrics.CreateDefaultBuilder()
+            //    .Build();
+            var metrics = Program.Metrics;
 
+            SampleMetricsRunner.ScheduleSomeSampleMetrics(metrics);
             services.AddMetrics(metrics);
             services.AddMetricsTrackingMiddleware();
-            //services.AddMetricsReportingHostedService();
+            services.AddMetricsReportingHostedService();
+            services.AddMetricsEndpoints();
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)

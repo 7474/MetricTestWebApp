@@ -27,7 +27,8 @@ namespace AppMetricsMackerelReporter
             request.Headers.Add("X-Api-Key", _apiKey);
             Logger.Debug("Send Host Metric. " + DateTimeOffset.UtcNow);
             var response = await base.SendAsync(request, cancellationToken);
-            Logger.Debug("Send Host Metric..." + response.StatusCode);
+            // コンテンツを呼び出し元で使う雰囲気はないのでここでデバッグ用に読んでしまう
+            Logger.Debug("Send Host Metric..." + response.StatusCode + " " + await response.Content.ReadAsStringAsync());
             return response;
         }
     }
