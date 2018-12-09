@@ -27,34 +27,29 @@ namespace AppMetricsMackerelReporter
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly string _hostId;
 
+        public MetricsMediaTypeValue MediaType => new MetricsMediaTypeValue("application", "vnd.appmetrics.metrics", "v1", "json");
+        public MetricFields MetricFields { get; set; }
+
         public HostMetricsJsonOutputFormatter(string hostId)
         {
             _serializerSettings = DefaultJsonSerializerSettings.CreateSerializerSettings();
             _hostId = hostId;
         }
 
-        public MetricsMediaTypeValue MediaType => new MetricsMediaTypeValue("application", "vnd.appmetrics.metrics", "v1", "json");
-
-        public MetricFields MetricFields { get; set; }
-
         public Task WriteAsync(
             Stream output,
             MetricsDataValueSource metricData,
             CancellationToken cancellationToken)
         {
-            if (output == null)
-            {
-                throw new ArgumentNullException(nameof(output));
-            }
-            var baseDt = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
-            var time = (metricData.Timestamp - baseDt).Ticks / 10000000;
-            var serilizer = JsonSerializer.Create(_serializerSettings);
+            var baseDate = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+            var time = (metricData.Timestamp - baseDate).Ticks / 10000000;
+
             var metrics = metricData.GetMackerelMetricsSnapshot()
-                .SelectMany(metricFamiry =>
+                .SelectMany(metricGroup =>
                 {
-                    return metricFamiry.metric.SelectMany(metric =>
+                    return metricGroup.metric.SelectMany(metricValue =>
                     {
-                        return ToMetricValues(_hostId, time, metricFamiry, metric);
+                        return ToMetricValues(_hostId, time, metricGroup, metricValue);
                     });
                 });
 
@@ -62,27 +57,28 @@ namespace AppMetricsMackerelReporter
             {
                 using (var textWriter = new JsonTextWriter(streamWriter))
                 {
+                    var serilizer = JsonSerializer.Create(_serializerSettings);
                     serilizer.Serialize(textWriter, metrics);
                 }
             }
-            Logger.Debug(string.Join(", ", metrics.Select(x => x.name)));
+            Logger.Debug(string.Join(",", metrics.Select(x => x.name)));
 
             return Task.CompletedTask;
         }
 
-        private static IEnumerable<HostMetricValue> ToMetricValues(string hostId, long time, MetricGroup family, MetricValue metric)
+        private static IEnumerable<HostMetricValue> ToMetricValues(string hostId, long time, MetricGroup metricGroup, MetricValue metricValue)
         {
-            return family.metric.Select(x => ToHostMetricValue(hostId, time, family, x));
+            return metricGroup.metric.Select(x => ToHostMetricValue(hostId, time, metricGroup, x));
         }
 
-        private static HostMetricValue ToHostMetricValue(string hostId, long time, MetricGroup family, MetricValue value)
+        private static HostMetricValue ToHostMetricValue(string hostId, long time, MetricGroup metricGroup, MetricValue metricValue)
         {
             return new HostMetricValue()
             {
                 hostId = hostId,
                 time = time,
-                name = family.name + (string.IsNullOrEmpty(value.name) ? "" : "." + value.name.NoamalizeName()),
-                value = value.value
+                name = metricGroup.name + (string.IsNullOrEmpty(metricValue.name) ? "" : "." + metricValue.name.NoamalizeName()),
+                value = metricValue.value
             };
         }
     }

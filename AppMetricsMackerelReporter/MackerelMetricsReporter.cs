@@ -24,6 +24,7 @@ namespace AppMetricsMackerelReporter
             this.Options = options;
 
             var httpOptions = Options.HttpOptions;
+            // https://mackerel.io/ja/api-docs/entry/host-metrics#post
             httpOptions.HttpSettings.RequestUri = new Uri(Options.ApiBase + "/tsdb");
             httpOptions.MetricsOutputFormatter = new HostMetricsJsonOutputFormatter(Options.HostId);
             httpOptions.InnerHttpMessageHandler = new MackerelApiMessageHandler(Options.ApiKey);

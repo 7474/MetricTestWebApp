@@ -17,39 +17,39 @@ namespace AppMetricsMackerelReporter.Extensions
                 foreach (var metricGroup in group.ApdexScores.GroupBy(
                     source => source.IsMultidimensional ? source.MultidimensionalName : source.Name))
                 {
-                    var promMetricGroup = new MetricGroup
+                    var mackerelMetricGroup = new MetricGroup
                     {
                         name = ToMetricName(group.Context, metricGroup.Key),
                         type = MetricType.Gauge
                     };
                     foreach (var metric in metricGroup)
                     {
-                        promMetricGroup.metric.AddRange(metric.ToMackerelMetrics());
+                        mackerelMetricGroup.metric.AddRange(metric.ToMackerelMetrics());
                     }
 
-                    result.Add(promMetricGroup);
+                    result.Add(mackerelMetricGroup);
                 }
 
                 foreach (var metricGroup in group.Gauges.GroupBy(
                     source => source.IsMultidimensional ? source.MultidimensionalName : source.Name))
                 {
-                    var promMetricGroup = new MetricGroup
+                    var mackerelMetricGroup = new MetricGroup
                     {
                         name = ToMetricName(group.Context, metricGroup.Key),
                         type = MetricType.Gauge
                     };
                     foreach (var metric in metricGroup)
                     {
-                        promMetricGroup.metric.AddRange(metric.ToMackerelMetrics());
+                        mackerelMetricGroup.metric.AddRange(metric.ToMackerelMetrics());
                     }
 
-                    result.Add(promMetricGroup);
+                    result.Add(mackerelMetricGroup);
                 }
 
                 foreach (var metricGroup in group.Counters.GroupBy(
                     source => source.IsMultidimensional ? source.MultidimensionalName : source.Name))
                 {
-                    var promMetricGroup = new MetricGroup
+                    var mackerelMetricGroup = new MetricGroup
                     {
                         name = ToMetricName(group.Context, metricGroup.Key),
                         type = MetricType.Gauge
@@ -57,16 +57,16 @@ namespace AppMetricsMackerelReporter.Extensions
 
                     foreach (var metric in metricGroup)
                     {
-                        promMetricGroup.metric.AddRange(metric.ToMackerelMetrics());
+                        mackerelMetricGroup.metric.AddRange(metric.ToMackerelMetrics());
                     }
 
-                    result.Add(promMetricGroup);
+                    result.Add(mackerelMetricGroup);
                 }
 
                 foreach (var metricGroup in group.Meters.GroupBy(
                     source => source.IsMultidimensional ? source.MultidimensionalName : source.Name))
                 {
-                    var promMetricGroup = new MetricGroup
+                    var mackerelMetricGroup = new MetricGroup
                     {
                         name = ToMetricName(group.Context, $"{metricGroup.Key}_total"),
                         type = MetricType.Counter
@@ -74,16 +74,16 @@ namespace AppMetricsMackerelReporter.Extensions
 
                     foreach (var metric in metricGroup)
                     {
-                        promMetricGroup.metric.AddRange(metric.ToMackerelMetrics());
+                        mackerelMetricGroup.metric.AddRange(metric.ToMackerelMetrics());
                     }
 
-                    result.Add(promMetricGroup);
+                    result.Add(mackerelMetricGroup);
                 }
 
                 foreach (var metricGroup in group.Histograms.GroupBy(
                     source => source.IsMultidimensional ? source.MultidimensionalName : source.Name))
                 {
-                    var promMetricGroup = new MetricGroup
+                    var mackerelMetricGroup = new MetricGroup
                     {
                         name = ToMetricName(group.Context, metricGroup.Key),
                         type = MetricType.Histogram
@@ -91,16 +91,16 @@ namespace AppMetricsMackerelReporter.Extensions
 
                     foreach (var timer in metricGroup)
                     {
-                        promMetricGroup.metric.AddRange(timer.ToMackerelMetrics());
+                        mackerelMetricGroup.metric.AddRange(timer.ToMackerelMetrics());
                     }
 
-                    result.Add(promMetricGroup);
+                    result.Add(mackerelMetricGroup);
                 }
 
                 foreach (var metricGroup in group.Timers.GroupBy(
                     source => source.IsMultidimensional ? source.MultidimensionalName : source.Name))
                 {
-                    var promMetricGroup = new MetricGroup
+                    var mackerelMetricGroup = new MetricGroup
                     {
                         name = ToMetricName(group.Context, metricGroup.Key),
                         type = MetricType.Timer
@@ -108,10 +108,10 @@ namespace AppMetricsMackerelReporter.Extensions
 
                     foreach (var timer in metricGroup)
                     {
-                        promMetricGroup.metric.AddRange(timer.ToMackerelMetrics());
+                        mackerelMetricGroup.metric.AddRange(timer.ToMackerelMetrics());
                     }
 
-                    result.Add(promMetricGroup);
+                    result.Add(mackerelMetricGroup);
                 }
             }
 

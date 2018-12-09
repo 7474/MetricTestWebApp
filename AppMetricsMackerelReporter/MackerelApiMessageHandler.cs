@@ -24,9 +24,11 @@ namespace AppMetricsMackerelReporter
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            request.Headers.Add("X-Api-Key", _apiKey);
             Logger.Debug("Send Host Metric. " + DateTimeOffset.UtcNow);
+
+            request.Headers.Add("X-Api-Key", _apiKey);
             var response = await base.SendAsync(request, cancellationToken);
+
             // コンテンツを呼び出し元で使う雰囲気はないのでここでデバッグ用に読んでしまう
             Logger.Debug("Send Host Metric..." + response.StatusCode + " " + await response.Content.ReadAsStringAsync());
             return response;

@@ -6,6 +6,9 @@ using System.Text;
 
 namespace AppMetricsMackerelReporter.Model
 {
+    /// <summary>
+    /// <seealso cref="https://mackerel.io/ja/api-docs/entry/host-metrics#post"/>
+    /// </summary>
     public class HostMetricValue
     {
         public string hostId { get; set; }
