@@ -7,7 +7,7 @@ using App.Metrics.Gauge;
 using App.Metrics.Histogram;
 using App.Metrics.Meter;
 using App.Metrics.Timer;
-using AppMetricsMackerelReporter.Model;
+using AppMetricsMackerelReporter.Models;
 
 namespace AppMetricsMackerelReporter.Extensions
 {

@@ -4,7 +4,7 @@ using System.Text;
 
 #pragma warning disable IDE1006
 
-namespace AppMetricsMackerelReporter.Model
+namespace AppMetricsMackerelReporter.Models
 {
     public class MetricValue
     {

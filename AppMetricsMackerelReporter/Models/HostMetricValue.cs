@@ -4,7 +4,7 @@ using System.Text;
 
 #pragma warning disable IDE1006
 
-namespace AppMetricsMackerelReporter.Model
+namespace AppMetricsMackerelReporter.Models
 {
     /// <summary>
     /// <seealso cref="https://mackerel.io/ja/api-docs/entry/host-metrics#post"/>

@@ -1,6 +1,6 @@
 ﻿using App.Metrics.Counter;
 using App.Metrics.Meter;
-using AppMetricsMackerelReporter.Model;
+using AppMetricsMackerelReporter.Models;
 
 namespace AppMetricsMackerelReporter.Extensions
 {

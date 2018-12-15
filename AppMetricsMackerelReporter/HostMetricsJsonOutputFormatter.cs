@@ -6,7 +6,7 @@ using App.Metrics.Formatters.Prometheus.Internal;
 using App.Metrics.Formatters.Prometheus.Internal.Extensions;
 using App.Metrics.Logging;
 using AppMetricsMackerelReporter.Extensions;
-using AppMetricsMackerelReporter.Model;
+using AppMetricsMackerelReporter.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
